@@ -106,13 +106,17 @@ namespace Discord
             get => _nameLocalizations;
             set
             {
-                foreach (var (locale, name) in value)
+                if (value != null)
                 {
-                    if(!Regex.IsMatch(locale, @"^\w{2}(?:-\w{2})?$"))
-                        throw new ArgumentException($"Invalid locale: {locale}", nameof(locale));
+                    foreach (var (locale, name) in value)
+                    {
+                        if(!Regex.IsMatch(locale, @"^\w{2}(?:-\w{2})?$"))
+                            throw new ArgumentException($"Invalid locale: {locale}", nameof(locale));
 
-                    EnsureValidOptionName(name);
+                        EnsureValidOptionName(name);
+                    }
                 }
+
                 _nameLocalizations = value;
             }
         }
@@ -126,13 +130,17 @@ namespace Discord
             get => _descriptionLocalizations;
             set
             {
-                foreach (var (locale, description) in value)
+                if (value != null)
                 {
-                    if(!Regex.IsMatch(locale, @"^\w{2}(?:-\w{2})?$"))
-                        throw new ArgumentException($"Invalid locale: {locale}", nameof(locale));
+                    foreach (var (locale, description) in value)
+                    {
+                        if(!Regex.IsMatch(locale, @"^\w{2}(?:-\w{2})?$"))
+                            throw new ArgumentException($"Invalid locale: {locale}", nameof(locale));
 
-                    EnsureValidOptionDescription(description);
+                        EnsureValidOptionDescription(description);
+                    }
                 }
+
                 _descriptionLocalizations = value;
             }
         }
@@ -145,10 +153,10 @@ namespace Discord
             if (name.Length > 32)
                 throw new ArgumentOutOfRangeException(nameof(name), "Name length must be less than or equal to 32.");
 
-            if (!Regex.IsMatch(name, @"^[\w-]{1,32}$"))
-                throw new FormatException($"{nameof(name)} must match the regex ^[\\w-]{{1,32}}$");
+            if (!Regex.IsMatch(name, @"^[-_\p{L}\p{N}\p{IsDevanagari}\p{IsThai}]{1,32}$"))
+                throw new ArgumentException(@"Name must match the regex ^[-_\p{L}\p{N}\p{IsDevanagari}\p{IsThai}]{1,32}$", nameof(name));
 
-            if (name.Any(x => char.IsUpper(x)))
+            if (name.Any(char.IsUpper))
                 throw new FormatException("Name cannot contain any uppercase characters.");
         }
 
